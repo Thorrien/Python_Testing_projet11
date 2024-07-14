@@ -1,6 +1,6 @@
 import json
 from flask import Flask,render_template,request,redirect,flash,url_for
-
+from datetime import datetime
 
 def loadClubs():
     with open('clubs.json') as c:
@@ -24,21 +24,32 @@ clubs = loadClubs()
 def index():
     return render_template('index.html')
 
-@app.route('/showSummary',methods=['POST'])
+@app.route('/showSummary', methods=['GET', 'POST'])
 def showSummary():
-    if any(club['email'] == request.form['email'] for club in clubs):
-        club = [club for club in clubs if club['email'] == request.form['email']][0]
-        return render_template('welcome.html',club=club,competitions=competitions)
-    else: 
-        message = " Ce n'est pas le bon email."
+    if request.method == 'POST':
+        email = request.form['email']
+    else:
+        email = request.args.get('email')
+
+    club = next((club for club in clubs if club['email'] == email), None)
+    if club:
+        return render_template('welcome.html', club=club, competitions=competitions)
+    else:
+        message = "Ce n'est pas le bon email."
         return render_template('index.html', message=message)
 
-@app.route('/book/<competition>/<club>')
+@app.route('/book/<competition>/<club>', methods=['GET','POST'])
 def book(competition,club):
     foundClub = [c for c in clubs if c['name'] == club][0]
     foundCompetition = [c for c in competitions if c['name'] == competition][0]
+    actualDate = datetime.now()
     if foundClub and foundCompetition:
-        return render_template('booking.html',club=foundClub,competition=foundCompetition)
+        competition_date = datetime.strptime(foundCompetition['date'], '%Y-%m-%d %H:%M:%S')
+        if competition_date >= actualDate:
+            return render_template('booking.html',club=foundClub,competition=foundCompetition)
+        else: 
+            flash("Réservation impossible sur les compétitions passées")
+            return redirect(url_for('showSummary', email=foundClub['email']))
     else:
         flash("Something went wrong-please try again")
         return render_template('welcome.html', club=club, competitions=competitions)
