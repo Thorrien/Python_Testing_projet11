@@ -43,7 +43,7 @@ def showSummary():
 
 @app.route('/book/<competition>/<club>', methods=['GET','POST'])
 def book(competition,club):
-    foundClub = [c for c in clubs if c['name'] == club][0]
+    foundClub =  [c for c in clubs if c['name'] == club][0]
     foundCompetition = [c for c in competitions if c['name'] == competition][0]
     actualDate = datetime.now()
     if foundClub and foundCompetition:
