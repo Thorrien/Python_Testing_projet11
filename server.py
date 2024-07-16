@@ -2,14 +2,17 @@ import json
 from flask import Flask,render_template,request,redirect,flash,url_for
 from datetime import datetime
 
+CLUBDOC = 'clubs.json'
+COMPETITIONDOC = 'competitions.json'
+
 def loadClubs():
-    with open('clubs.json') as c:
+    with open(CLUBDOC) as c:
          listOfClubs = json.load(c)['clubs']
          return listOfClubs
 
 
 def loadCompetitions():
-    with open('competitions.json') as comps:
+    with open(COMPETITIONDOC) as comps:
          listOfCompetitions = json.load(comps)['competitions']
          return listOfCompetitions
 
@@ -73,9 +76,6 @@ def purchasePlaces():
         flash('Refus : Réservation de plus de 12 places impossible')
         return render_template('welcome.html', club=club, competitions=competitions)
 
-
-# TODO: Add route for points display
-
 @app.route('/showClubs', methods=['GET'])
 def showClub():
     return render_template('clubList.html', clubs=clubs)
@@ -83,3 +83,4 @@ def showClub():
 @app.route('/logout')
 def logout():
     return redirect(url_for('index'))
+
