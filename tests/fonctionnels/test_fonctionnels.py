@@ -5,9 +5,12 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.firefox.service import Service as FirefoxService
 from webdriver_manager.firefox import GeckoDriverManager
 import time
+from cle import cle
+import os
 
 @pytest.fixture
 def browser():
+    os.environ['GH_TOKEN'] = cle()
     service = FirefoxService(GeckoDriverManager().install())
     driver = webdriver.Firefox(service=service)
     yield driver
