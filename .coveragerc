@@ -1,2 +1,2 @@
 [run]
-omit = Lib/*, Scripts/*, tests/*
+omit = Lib/*, Scripts/*, tests/*, cle.py
